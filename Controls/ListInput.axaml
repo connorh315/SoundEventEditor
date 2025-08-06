@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:SoundEventEditor.ViewModels"
+        xmlns:controls="using:SoundEventEditor">
+
+  <!--
+    Additional resources 
+    Using Control Themes:
+         https://docs.avaloniaui.net/docs/basics/user-interface/styling/control-themes
+    Using Theme Variants:
+         https://docs.avaloniaui.net/docs/guides/styles-and-resources/how-to-use-theme-variants
+  -->
+  
+  <Design.PreviewWith>
+    <StackPanel Width="400" Spacing="10">      
+        <StackPanel Background="{DynamicResource SystemRegionBrush}">
+          <controls:ListInput />
+        </StackPanel>
+    </StackPanel>
+  </Design.PreviewWith>
+ 
+  <ControlTheme x:Key="{x:Type controls:ListInput}" TargetType="controls:ListInput">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="{TemplateBinding Label}" Margin="0 8 0 0" Width="150"/>
+          <StackPanel Spacing="0">
+            <ItemsControl ItemsSource="{TemplateBinding Items}" x:Name="items">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Spacing="10" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal" Spacing="6" x:DataType="vm:StringItemViewModel">
+                    <TextBox Text="{Binding Value, Mode=TwoWay}" Width="300" />
+                    <Button Content="X" Command="{Binding #items.((vm:StringListOptionViewModel)DataContext).RemoveCommand}" 
+                                        CommandParameter="{Binding .}" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Name="PART_AddItemBtn" Content="Add Item" HorizontalContentAlignment="Center" Width="300" Margin="0 5 0 0" />
+          </StackPanel>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

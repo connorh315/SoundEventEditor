@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:SoundEventEditor.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="1000"
+        x:Class="SoundEventEditor.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="800"
+        Height="1000"
+        Title="SoundEventEditor">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <Menu Grid.Row="0">
+      <MenuItem Header="_File">
+        <MenuItem Header="_Open" Click="MenuItem_Open"/>
+        <MenuItem Header="_Save" Click="MenuItem_Save"/>
+        <MenuItem Header="Save _As" Click="MenuItem_SaveAs"/>
+      </MenuItem>
+    </Menu>
+
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <Grid>
+        <StackPanel Margin="20" Grid.Row="0" IsVisible="{Binding ShowSoundEventPanel}">
+          <ItemsControl ItemsSource="{Binding RootNode}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <SoundEventPanel DataContext="{Binding .}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+        <StackPanel Margin="20" Grid.Row="0" IsVisible="{Binding !ShowSoundEventPanel}">
+          <DropDownButton x:Name="CreateRootButton" Content="Create root SoundEvent" HorizontalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+    </ScrollViewer>
+  </Grid>
+</Window>

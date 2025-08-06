@@ -1,0 +1,123 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="clr-namespace:SoundEventEditor.ViewModels"
+             x:Class="SoundEventEditor.SoundEventPanel"
+             x:DataType="vm:SoundEventViewModel">
+
+  <UserControl.DataTemplates>
+    <DataTemplate DataType="{x:Type vm:BoolOptionViewModel}">
+      <CheckBox IsChecked="{Binding Value, Mode=TwoWay}" Content="{Binding Label}" />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:StringOptionViewModel}">
+      <Input InputLabel="{Binding Label}" Value="{Binding Value, Mode=TwoWay}" NumericValue="{Binding IsNumeric}" FloatValue="{Binding IsFloat}" />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:StringListOptionViewModel}">
+      <ListInput Label="{Binding Label}" Items="{Binding Values}" />
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type vm:SelectionOptionViewModel}">
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="{Binding Label}" VerticalAlignment="Center" Width="150"/>
+        <ComboBox ItemsSource="{Binding Choices}" SelectedItem="{Binding Value, Mode=TwoWay}" Width="300"/>
+      </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:DividerViewModel}">
+      <Border BorderThickness="0 0 0 2" BorderBrush="Gainsboro" Padding="0 0 0 4" Margin="0 8 0 16">
+        <TextBlock Text="{Binding Label}" FontWeight="Bold" Foreground="Gainsboro" />
+      </Border>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type vm:SoundEventViewModel}">
+      <SoundEventPanel DataContext="{Binding }" />
+    </DataTemplate>
+  </UserControl.DataTemplates>
+
+  <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="8" Padding="8">
+    <StackPanel Spacing="10">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        
+        <TextBlock Grid.Column="0" FontSize="16" FontWeight="Bold">
+          <Run Text="&#10687;" Foreground="{Binding BorderColour}" />
+          <Run Text="{Binding Title}" />
+        </TextBlock>
+        <Button Grid.Column="1" Content="X" Background="DarkRed" Click="DestroyThis" />
+      </Grid>
+
+      <Expander HorizontalAlignment="Stretch" Background="Transparent" IsVisible="{Binding HasConnections}" x:Name="ConnectionsContainer">
+        <Expander.Header>
+          <DockPanel>
+            <TextBlock VerticalAlignment="Center" Text="Connections" DockPanel.Dock="Left" />
+            <Button Click="AddConnection" Content="Add new connection" HorizontalAlignment="Right" DockPanel.Dock="Right" />
+          </DockPanel>
+        </Expander.Header>
+        <StackPanel Margin="5">
+          <ItemsControl ItemsSource="{Binding Connections}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Spacing="10" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <ContentControl Content="{Binding}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Expander>
+      
+      <Expander Header="Options" HorizontalAlignment="Stretch" Background="Transparent">
+        <StackPanel Margin="5">
+          <ItemsControl ItemsSource="{Binding Options}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Spacing="5" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                  <ContentControl Content="{Binding}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Expander>
+      
+      <Expander HorizontalAlignment="Stretch" Background="Transparent" x:Name="ChildrenContainer" >
+        <Expander.Header>
+          <DockPanel>
+            <TextBlock VerticalAlignment="Center" Text="Children" DockPanel.Dock="Left" />
+            <DropDownButton x:Name="AddChildButton" Content="Add new child" HorizontalAlignment="Right" DockPanel.Dock="Right" />
+          </DockPanel>
+        </Expander.Header>
+        <StackPanel Margin="20 0 0 0">
+          <ItemsControl ItemsSource="{Binding Children}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Spacing="10" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <ContentControl Content="{Binding}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          
+        </StackPanel>
+      </Expander>
+    </StackPanel>
+  </Border>
+
+
+</UserControl>
