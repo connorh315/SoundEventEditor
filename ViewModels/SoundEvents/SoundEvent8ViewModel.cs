@@ -1,14 +1,8 @@
-﻿using Avalonia.Controls.Chrome;
-using SoundEventEditor.SoundEvents;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SoundEventEditor.SoundEvents;
 
 namespace SoundEventEditor.ViewModels.SoundEvents
 {
-    public class SoundEvent8 : SoundEventViewModel
+    public class SoundEvent8ViewModel : SoundEventViewModel
     {
         public override string Title => "Conversation";
 
@@ -16,26 +10,26 @@ namespace SoundEventEditor.ViewModels.SoundEvents
 
         protected override void BuildFromEvent(SoundEvent rawEvent)
         {
-            SEVT_8 evt = (SEVT_8)rawEvent;
+            SoundEvent8 evt = (SoundEvent8)rawEvent;
 
             Model = evt;
 
-            Options = new()
-            {
+            Options =
+            [
                 new StringOptionViewModel("PlayPriority", evt.PlayPriority, true, false),
 
                 new BoolOptionViewModel("OnFailedInterruptWait", evt.OnFailedInterruptWait),
                 new BoolOptionViewModel("PriorityOverSame", evt.PriorityOverSame, true),
-            };
+            ];
 
-            SelectableChildren = new()
-            {
+            SelectableChildren =
+            [
                 SoundEventType.Group,
                 SoundEventType.StreamingSpeech,
                 SoundEventType.Speech
-            };
+            ];
 
-            Connections = new();
+            Connections = [];
             if (evt.Connections != null && evt.Connections.Count > 0)
             {
                 foreach (var conn in evt.Connections)
@@ -49,12 +43,12 @@ namespace SoundEventEditor.ViewModels.SoundEvents
 
         public override SoundEvent RebuildEvent()
         {
-            SEVT_8 evt = (SEVT_8)Model;
+            SoundEvent8 evt = (SoundEvent8)Model;
             evt.PlayPriority = GetOption("PlayPriority").GetByte();
             evt.OnFailedInterruptWait = GetOption("OnFailedInterruptWait").GetByte();
             evt.PriorityOverSame = GetOption("PriorityOverSame").GetByte();
 
-            evt.Connections = new();
+            evt.Connections = [];
             foreach (var conn in Connections)
             {
                 evt.Connections.Add(conn.RebuildEvent());
@@ -65,12 +59,12 @@ namespace SoundEventEditor.ViewModels.SoundEvents
             return evt;
         }
 
-        public SoundEvent8()
+        public SoundEvent8ViewModel()
         {
-            BuildFromEvent(new SEVT_8());
+            BuildFromEvent(new SoundEvent8());
         }
 
-        public SoundEvent8(SEVT_8 evt)
+        public SoundEvent8ViewModel(SoundEvent8 evt)
         {
             BuildFromEvent(evt);
         }

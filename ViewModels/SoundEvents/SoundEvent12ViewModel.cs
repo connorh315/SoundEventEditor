@@ -1,13 +1,8 @@
 ﻿using SoundEventEditor.SoundEvents;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SoundEventEditor.ViewModels.SoundEvents
 {
-    public class SoundEvent12 : SoundEventViewModel
+    public class SoundEvent12ViewModel : SoundEventViewModel
     {
         public override string Title => "Character";
 
@@ -15,26 +10,26 @@ namespace SoundEventEditor.ViewModels.SoundEvents
 
         protected override void BuildFromEvent(SoundEvent rawEvent)
         {
-            SEVT_12 evt = (SEVT_12)rawEvent;
+            SoundEvent12 evt = (SoundEvent12)rawEvent;
 
             Model = evt;
 
-            Options = new()
-            {
+            Options =
+            [
                 new StringOptionViewModel("CharacterName", evt.CharacterName),
                 new BoolOptionViewModel("NoFlappy", evt.NoFlappy, true),
                 new StringOptionViewModel("FacialAnimationSet", evt.FacialAnimationSet),
                 new StringOptionViewModel("FacialAnimationAction", evt.FacialAnimationAction),
                 new StringOptionViewModel("BodyAnimationSet", evt.BodyAnimationSet),
                 new StringOptionViewModel("BodyAnimationAction", evt.BodyAnimationAction),
-            };
+            ];
 
             Children = null;
         }
 
         public override SoundEvent RebuildEvent()
         {
-            SEVT_12 evt = (SEVT_12)Model;
+            SoundEvent12 evt = (SoundEvent12)Model;
 
             evt.CharacterName = (string)GetOption("CharacterName").Value;
             evt.NoFlappy = GetOption("NoFlappy").GetByte();
@@ -46,14 +41,14 @@ namespace SoundEventEditor.ViewModels.SoundEvents
             return evt;
         }
 
-        public SoundEvent12(SEVT_12 evt)
+        public SoundEvent12ViewModel(SoundEvent12 evt)
         {
             BuildFromEvent(evt);
         }
 
-        public SoundEvent12()
+        public SoundEvent12ViewModel()
         {
-            BuildFromEvent(new SEVT_12());
+            BuildFromEvent(new SoundEvent12());
         }
     }
 }

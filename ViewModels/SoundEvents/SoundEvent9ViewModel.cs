@@ -1,37 +1,31 @@
-﻿using Avalonia.Controls.Chrome;
-using SoundEventEditor.SoundEvents;
+﻿using SoundEventEditor.SoundEvents;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace SoundEventEditor.ViewModels.SoundEvents
 {
-    public class SoundEvent9 : SoundEventViewModel
+    public class SoundEvent9ViewModel : SoundEventViewModel
     {
         public override string Title => "Speech";
 
         public override string BorderColour => "Magenta";
 
-        private SoundEvent6 Name;
+        private SoundEvent6ViewModel Name;
 
         protected override void BuildFromEvent(SoundEvent rawEvent)
         {
-            SEVT_9 evt = (SEVT_9)rawEvent;
+            SoundEvent9 evt = (SoundEvent9)rawEvent;
 
             Model = evt;
 
-            Connections = new();
+            Connections = [];
 
             foreach (SoundEvent child in rawEvent.Children)
             {
-                if (child is SEVT_6 name)
+                if (child is SoundEvent6 name)
                 {
-                    Name = (SoundEvent6)ConvertToViewModel(name);
+                    Name = (SoundEvent6ViewModel)ConvertToViewModel(name);
                 }
-                else if (child is SEVT_4 busConn)
+                else if (child is SoundEvent4 busConn)
                 {
                     Connections.Add(ConvertToViewModel(busConn));
                 }
@@ -41,8 +35,8 @@ namespace SoundEventEditor.ViewModels.SoundEvents
                 }
             }
 
-            Options = new()
-            {
+            Options =
+            [
                 Name.GetOption("Name"),
                 Name.GetOption("SubAlwaysOn"),
                 Name.GetOption("HighPriority"),
@@ -68,7 +62,6 @@ namespace SoundEventEditor.ViewModels.SoundEvents
                 new BoolOptionViewModel("OverrideUserMusic", evt.OverrideUserMusic),
                 new BoolOptionViewModel("ShouldLoopFlag", evt.Loopable),
                 new BoolOptionViewModel("FallOffTypeInverse", evt.FallOffTypeInverse),
-
 
                 new DividerViewModel("SampleSettings"),
 
@@ -101,23 +94,23 @@ namespace SoundEventEditor.ViewModels.SoundEvents
                 new StringOptionViewModel("StartPitch", evt.StartPitch),
                 new StringOptionViewModel("TargetPitch", evt.TargetPitch),
                 new StringOptionViewModel("EndPitch", evt.EndPitch),
-            };
+            ];
 
 
             foreach (var character in evt.Characters)
             {
                 Children.Add(ConvertToViewModel(character));
             }
-            SelectableChildren = new() { SoundEventType.Character }; // no children allowed
+
+            SelectableChildren = [SoundEventType.Character]; // no children allowed
         }
 
         public override SoundEvent RebuildEvent()
         {
-            SEVT_9 evt = (SEVT_9)Model;
+            SoundEvent9 evt = (SoundEvent9)Model;
 
-            evt.Children = new();
+            evt.Children = [Name.RebuildEvent()];
 
-            evt.Children.Add(Name.RebuildEvent());
             foreach (var conn in Connections)
             {
                 evt.Children.Add(conn.RebuildEvent());
@@ -174,22 +167,22 @@ namespace SoundEventEditor.ViewModels.SoundEvents
             evt.Characters.Clear();
             foreach (var c in Children)
             {
-                evt.Characters.Add((SEVT_12)c.RebuildEvent());
+                evt.Characters.Add((SoundEvent12)c.RebuildEvent());
             }
 
             return evt;
         }
 
-        public SoundEvent9()
+        public SoundEvent9ViewModel()
         {
-            SEVT_6 name = new SEVT_6();
-            SEVT_9 evt9 = new SEVT_9();
+            SoundEvent6 name = new();
+            SoundEvent9 evt9 = new();
             evt9.Children.Add(name);
 
             BuildFromEvent(evt9);
         }
 
-        public SoundEvent9(SEVT_9 evt)
+        public SoundEvent9ViewModel(SoundEvent9 evt)
         {
             BuildFromEvent(evt);
         }

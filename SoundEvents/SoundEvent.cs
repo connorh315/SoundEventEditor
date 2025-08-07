@@ -1,101 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace SoundEventEditor.SoundEvents
 {
     public abstract class SoundEvent
     {
         public List<SoundEvent> Connections;
-        public List<SoundEvent> Children = new();
+        public List<SoundEvent> Children = [];
 
-        public abstract void Parse(RawFile file);
+        public abstract void Parse(RawFile rawFile);
 
         public abstract int Version { get; }
 
-        public virtual void Write(RawFile file)
+        public virtual void Write(RawFile rawFile)
         {
-            file.WriteString("TVES");
-            file.WriteInt(1, true);
-            file.WriteInt(Version, true);
-            file.WriteInt(-1); // Checksum :)
+            rawFile.WriteString("TVES");
+            rawFile.WriteInt(1, true);
+            rawFile.WriteInt(Version, true);
+            rawFile.WriteInt(-1); // Checksum :)
         }
 
-        public static SoundEvent GetSoundEvent(RawFile file)
+        public static SoundEvent GetSoundEvent(RawFile rawFile)
         {
-            if (file.ReadString(4) != "TVES") throw new DataMisalignedException("Misaligned!");
-            uint version = file.ReadUInt(true);
-            uint seType = file.ReadUInt(true);
-            uint seId = file.ReadUInt(true);
+            string test = rawFile.ReadString(4);
 
-            SoundEvent evt;
-            switch (seType)
+            if (test != "TVES")
             {
-                case 9:
-                    evt = new SEVT_9();
-                    break;
-                case 8:
-                    evt = new SEVT_8();
-                    break;
-                case 7:
-                    evt = new SEVT_7();
-                    break;
-                case 4:
-                    evt = new SEVT_4();
-                    break;
-                case 3:
-                    evt = new SEVT_3();
-                    break;
-                case 10:
-                    evt = new SEVT_10();
-                    break;
-                case 6:
-                    evt = new SEVT_6();
-                    break;
-                case 2:
-                    evt = new SEVT_2();
-                    break;
-                case 1:
-                    evt = new SEVT_1();
-                    break;
-                case 0:
-                    evt = new SEVT_0();
-                    break;
-                default:
-                    throw new AccessViolationException($"Unknown SoundEvent type: {seType}");
+                throw new DataMisalignedException("Misaligned!");
             }
 
-            evt.Parse(file);
+            uint version = rawFile.ReadUInt(true);
+            uint type    = rawFile.ReadUInt(true);
+            uint id      = rawFile.ReadUInt(true);
 
-            return evt;
+            SoundEvent soundEvent = type switch
+            {
+                0  => new SoundEvent0(),
+                1  => new SoundEvent1(),
+                2  => new SoundEvent2(),
+                3  => new SoundEvent3(),
+                4  => new SoundEvent4(),
+                6  => new SoundEvent6(),
+                7  => new SoundEvent7(),
+                8  => new SoundEvent8(),
+                9  => new SoundEvent9(),
+                10 => new SoundEvent10(),
+                _  => throw new AccessViolationException($"Unknown SoundEvent type: {type}"),
+            };
+
+            soundEvent.Parse(rawFile);
+
+            return soundEvent;
         }
 
-        public static SoundEvent OpenFile(string fileLocation)
+        public static SoundEvent OpenFile(string filePath)
         {
-            using (RawFile file = new RawFile(fileLocation))
-            {
-                int fileLength = file.ReadInt(true);
+            RawFile file = new(filePath);
 
-                SoundEvent root = SoundEvent.GetSoundEvent(file);
+            _ = file.ReadInt(true); // File length
 
-                return root;
-            }
+            return GetSoundEvent(file);
         }
 
-        public static void SaveFile(string fileLocation, SoundEvent root)
+        public static void SaveFile(string filePath, SoundEvent soundEvent)
         {
-            using (RawFile file = new RawFile(fileLocation))
-            {
-                file.WriteInt(0); // The length of the file, fixed at the end
+            using RawFile file = new(filePath);
 
-                root.Write(file);
+            file.WriteInt(0); // The length of the file, fixed at the end
 
-                file.Seek(0, System.IO.SeekOrigin.Begin);
+            soundEvent.Write(file);
 
-                file.WriteInt((int)file.fileStream.Length - 4, true);
-            }
+            file.Seek(0, SeekOrigin.Begin);
+
+            file.WriteInt((int)file.fileStream.Length - 4, true);
         }
     }
 }

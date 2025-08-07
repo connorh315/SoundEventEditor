@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SoundEventEditor.SoundEvents
 {
-    public class SEVT_4 : SoundEvent // Connect to bus(es)
+    public class SoundEvent4 : SoundEvent // Connect to bus(es)
     {
         public override int Version => 4;
 

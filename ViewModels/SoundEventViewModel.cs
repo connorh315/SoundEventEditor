@@ -4,12 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.Design.Serialization;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SoundEventEditor.ViewModels
 {
@@ -32,33 +27,21 @@ namespace SoundEventEditor.ViewModels
 
         public static SoundEventViewModel CreateSoundEvent(SoundEventType type)
         {
-            switch (type)
+            return type switch
             {
-                case SoundEventType.Event:
-                    return new SoundEvent0();
-                case SoundEventType.Sample:
-                    return new SoundEvent1();
-                case SoundEventType.Stream:
-                    return new SoundEvent2();
-                case SoundEventType.Group:
-                    return new SoundEvent3();
-                case SoundEventType.BusConnection:
-                    return new SoundEvent4();
-                case SoundEventType.Name:
-                    return new SoundEvent6();
-                case SoundEventType.Sequence:
-                    return new SoundEvent7();
-                case SoundEventType.Conversation:
-                    return new SoundEvent8();
-                case SoundEventType.Speech:
-                    return new SoundEvent9();
-                case SoundEventType.StreamingSpeech:
-                    return new SoundEvent10();
-                case SoundEventType.Character:
-                    return new SoundEvent12();
-            }
-
-            return null;
+                SoundEventType.Event => new SoundEvent0ViewModel(),
+                SoundEventType.Sample => new SoundEvent1ViewModel(),
+                SoundEventType.Stream => new SoundEvent2ViewModel(),
+                SoundEventType.Group => new SoundEvent3ViewModel(),
+                SoundEventType.BusConnection => new SoundEvent4ViewModel(),
+                SoundEventType.Name => new SoundEvent6ViewModel(),
+                SoundEventType.Sequence => new SoundEvent7ViewModel(),
+                SoundEventType.Conversation => new SoundEvent8ViewModel(),
+                SoundEventType.Speech => new SoundEvent9ViewModel(),
+                SoundEventType.StreamingSpeech => new SoundEvent10ViewModel(),
+                SoundEventType.Character => new SoundEvent12ViewModel(),
+                _ => null,
+            };
         }
 
         public abstract string Title { get; }
@@ -99,17 +82,18 @@ namespace SoundEventEditor.ViewModels
         {
             return evt switch
             {
-                SEVT_0 evt0 => new SoundEvent0(evt0),
-                SEVT_1 evt1 => new SoundEvent1(evt1),
-                SEVT_2 evt2 => new SoundEvent2(evt2),
-                SEVT_3 evt3 => new SoundEvent3(evt3),
-                SEVT_4 evt4 => new SoundEvent4(evt4),
-                SEVT_6 evt6 => new SoundEvent6(evt6),
-                SEVT_7 evt7 => new SoundEvent7(evt7),
-                SEVT_8 evt8 => new SoundEvent8(evt8),
-                SEVT_9 evt9 => new SoundEvent9(evt9),
-                SEVT_10 evt10 => new SoundEvent10(evt10),
-                SEVT_12 evt12 => new SoundEvent12(evt12)
+                SoundEvent0 evt0 => new SoundEvent0ViewModel(evt0),
+                SoundEvent1 evt1 => new SoundEvent1ViewModel(evt1),
+                SoundEvent2 evt2 => new SoundEvent2ViewModel(evt2),
+                SoundEvent3 evt3 => new SoundEvent3ViewModel(evt3),
+                SoundEvent4 evt4 => new SoundEvent4ViewModel(evt4),
+                SoundEvent6 evt6 => new SoundEvent6ViewModel(evt6),
+                SoundEvent7 evt7 => new SoundEvent7ViewModel(evt7),
+                SoundEvent8 evt8 => new SoundEvent8ViewModel(evt8),
+                SoundEvent9 evt9 => new SoundEvent9ViewModel(evt9),
+                SoundEvent10 evt10 => new SoundEvent10ViewModel(evt10),
+                SoundEvent12 evt12 => new SoundEvent12ViewModel(evt12),
+                _ => throw new NotImplementedException()
             };
         }
 
@@ -170,8 +154,8 @@ namespace SoundEventEditor.ViewModels
 
         public ObservableCollection<SoundEventViewModel> Children { get; protected set; } = new();
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         public void Destroy()

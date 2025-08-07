@@ -1,42 +1,37 @@
-﻿using Avalonia.Controls;
-using SoundEventEditor.SoundEvents;
-using SoundEventEditor.ViewModels.SoundEvents;
-using System;
-using System.Collections.Generic;
+﻿using SoundEventEditor.SoundEvents;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using static SoundEventEditor.ViewModels.SoundEventViewModel;
 
 namespace SoundEventEditor.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        private ObservableCollection<SoundEventViewModel> rootNode = new(); // This is not my fault. Silly UI Framework that I don't know how to use :)
+        private readonly ObservableCollection<SoundEventViewModel> _rootNode = []; // This is not my fault. Silly UI Framework that I don't know how to use :)
         public ObservableCollection<SoundEventViewModel> RootNode
         {
-            get => rootNode;
+            get => _rootNode;
         }
 
-        public string FileLocation;
-
-        private bool showSoundEventPanel;
+        private bool _showSoundEventPanel;
         public bool ShowSoundEventPanel
         {
-            get => showSoundEventPanel;
+            get => _showSoundEventPanel;
             set
             {
-                showSoundEventPanel = value;
+                _showSoundEventPanel = value;
+
                 OnPropertyChanged();
             }
         }
 
+        public string FilePath;
+
         public void OnRootNodeDestroy()
         {
             RootNode.Clear();
+
             ShowSoundEventPanel = false;
         }
 
@@ -44,20 +39,23 @@ namespace SoundEventEditor.ViewModels
         {
             RootNode.Clear();
             RootNode.Add(model);
+
             ShowSoundEventPanel = true;
         }
 
         public void SetRootSoundEvent(SoundEventType type)
         {
-            var evt = SoundEventViewModel.CreateSoundEvent(type);
+            var evt = CreateSoundEvent(type);
             evt.OnDestroy = OnRootNodeDestroy;
+
             SetRootNode(evt);
         }
 
-        public void OpenFile(string fileLocation)
+        public void OpenFile(string filePath)
         {
-            FileLocation = fileLocation;
-            SetRootNode(SoundEventViewModel.OpenFile(fileLocation, OnRootNodeDestroy));
+            FilePath = filePath;
+
+            SetRootNode(SoundEventViewModel.OpenFile(filePath, OnRootNodeDestroy));
         }
 
         public void SaveFile()
@@ -66,7 +64,7 @@ namespace SoundEventEditor.ViewModels
 
             SoundEvent root = RootNode[0].RebuildEvent();
 
-            SoundEvent.SaveFile(FileLocation, root);
+            SoundEvent.SaveFile(FilePath, root);
         }
 
         public MainWindowViewModel()
@@ -79,8 +77,8 @@ namespace SoundEventEditor.ViewModels
             //SetRootNode(SoundEventViewModel.OpenFile(@"C:\Users\Connor\Desktop\soundevents\AUDIO\EVENTS\DX_Aquaman_Exit.SOUND_EVENT", OnRootNodeDestroy));
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

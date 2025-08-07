@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SoundEventEditor.SoundEvents
 {
-    public class SEVT_0 : SoundEvent
+    public class SoundEvent0 : SoundEvent
     {
         public override int Version => 0;
 
@@ -33,7 +29,7 @@ namespace SoundEventEditor.SoundEvents
 
             for (int i = 0; i < components; i++)
             {
-                Children.Add(SoundEvent.GetSoundEvent(file));
+                Children.Add(GetSoundEvent(file));
             }
         }
 

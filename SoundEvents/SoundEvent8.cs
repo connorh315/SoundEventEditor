@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SoundEventEditor.SoundEvents
 {
-    public class SEVT_8 : SoundEvent // Conversation
+    public class SoundEvent8 : SoundEvent // Conversation
     {
         public override int Version => 8;
 
@@ -79,8 +75,10 @@ namespace SoundEventEditor.SoundEvents
             {
                 var conn = GetSoundEvent(file);
 
-                if (conn is not SEVT_4 sevt)
+                if (conn is not SoundEvent4)
+                {
                     throw new InvalidDataException($"Unexpected SoundEvent type: {conn.GetType().Name}");
+                }
 
                 Connections.Add(conn);
             }
@@ -98,7 +96,7 @@ namespace SoundEventEditor.SoundEvents
             Children = new List<SoundEvent>(eventsCount);
             for (int i = 0; i < eventsCount; i++)
             {
-                Children.Add(SoundEvent.GetSoundEvent(file));
+                Children.Add(GetSoundEvent(file));
                 int pad = file.ReadInt();
             }
         }
