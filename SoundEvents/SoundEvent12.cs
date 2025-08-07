@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SoundEventEditor.SoundEvents
+﻿namespace SoundEventEditor.SoundEvents
 {
-    public class SEVT_12 : SoundEvent
+    public class SoundEvent12 : SoundEvent
     {
         public override int Version => 0xC;
         

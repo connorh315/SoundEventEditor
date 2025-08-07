@@ -1,15 +1,9 @@
-﻿using Avalonia.Controls.Chrome;
-using SoundEventEditor.SoundEvents;
+﻿using SoundEventEditor.SoundEvents;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace SoundEventEditor.ViewModels.SoundEvents
 {
-    public class SoundEvent2 : SoundEventViewModel
+    public class SoundEvent2ViewModel : SoundEventViewModel
     {
         public override string Title => "Stream";
 
@@ -17,7 +11,7 @@ namespace SoundEventEditor.ViewModels.SoundEvents
 
         protected override void BuildFromEvent(SoundEvent rawEvent)
         {
-            SEVT_2 evt = (SEVT_2)rawEvent;
+            SoundEvent2 evt = (SoundEvent2)rawEvent;
 
             Model = evt;
 
@@ -25,7 +19,7 @@ namespace SoundEventEditor.ViewModels.SoundEvents
 
             foreach (SoundEvent child in rawEvent.Children)
             {
-                if (child is SEVT_4 busConn)
+                if (child is SoundEvent4 busConn)
                 {
                     Connections.Add(ConvertToViewModel(busConn));
                 }
@@ -58,7 +52,6 @@ namespace SoundEventEditor.ViewModels.SoundEvents
                 new BoolOptionViewModel("OverrideUserMusic", evt.OverrideUserMusic),
                 new BoolOptionViewModel("ShouldLoopFlag", evt.Loopable),
                 new BoolOptionViewModel("FallOffTypeInverse", evt.FallOffTypeInverse),
-
 
                 new DividerViewModel("SampleSettings"),
 
@@ -93,14 +86,14 @@ namespace SoundEventEditor.ViewModels.SoundEvents
                 new StringOptionViewModel("EndPitch", evt.EndPitch),
             };
 
-            SelectableChildren = new() { };
+            SelectableChildren = [];
         }
 
         public override SoundEvent RebuildEvent()
         {
-            SEVT_2 evt = (SEVT_2)Model;
+            SoundEvent2 evt = (SoundEvent2)Model;
 
-            evt.Children = new();
+            evt.Children = [];
             
             foreach (var conn in Connections)
             {
@@ -158,12 +151,12 @@ namespace SoundEventEditor.ViewModels.SoundEvents
             return evt;
         }
 
-        public SoundEvent2()
+        public SoundEvent2ViewModel()
         {
-            BuildFromEvent(new SEVT_2());
+            BuildFromEvent(new SoundEvent2());
         }
 
-        public SoundEvent2(SEVT_2 evt)
+        public SoundEvent2ViewModel(SoundEvent2 evt)
         {
             BuildFromEvent(evt);
         }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace SoundEventEditor.SoundEvents
+﻿namespace SoundEventEditor.SoundEvents
 {
-    public class SEVT_7 : SoundEvent // Sequence (or connect with delay)
+    public class SoundEvent7 : SoundEvent // Sequence (or connect with delay)
     {
         public override int Version => 7;
 

@@ -1,43 +1,61 @@
-﻿using Avalonia.Controls.Chrome;
-using SoundEventEditor.SoundEvents;
+﻿using SoundEventEditor.SoundEvents;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace SoundEventEditor.ViewModels.SoundEvents
 {
-    public class SoundEvent1 : SoundEventViewModel
+    public class SoundEvent10ViewModel : SoundEventViewModel
     {
-        public override string Title => "Sample";
+        public override string Title => "StreamingSpeech";
 
-        public override string BorderColour => "White";
+        public override string BorderColour => "Purple";
+
+        private SoundEvent6ViewModel Name;
+
+        //private string GetFiletypeString(byte choice)
+        //{
+        //    switch (choice)
+        //    {
+        //        case 0:
+        //            return "VAG";
+        //        case 1:
+        //            return "OGG";
+        //        case 9:
+        //            return "CBX";
+        //        default:
+        //            return "";
+        //    }
+        //}
 
         protected override void BuildFromEvent(SoundEvent rawEvent)
         {
-            SEVT_1 evt = (SEVT_1)rawEvent;
+            SoundEvent10 evt = (SoundEvent10)rawEvent;
 
             Model = evt;
 
-            Connections = new();
+            Connections = [];
 
             foreach (SoundEvent child in rawEvent.Children)
             {
-                if (child is SEVT_4 busConn)
+                if (child is SoundEvent6 name)
+                {
+                    Name = (SoundEvent6ViewModel)ConvertToViewModel(name);
+                }
+                else if (child is SoundEvent4 busConn)
                 {
                     Connections.Add(ConvertToViewModel(busConn));
                 }
                 else
                 {
-                    throw new Exception($"Unexpected child of SoundEvent1 - {child.GetType()}");
+                    throw new Exception($"Unexpected child of SoundEvent10 - {child.GetType()}");
                 }
             }
 
+            Options =
+            [
+                Name.GetOption("Name"),
+                Name.GetOption("SubAlwaysOn"),
+                Name.GetOption("HighPriority"),
 
-            Options = new()
-            {
                 new DividerViewModel("FileSettings"),
 
                 new StringOptionViewModel("Filename", evt.Filename),
@@ -91,18 +109,22 @@ namespace SoundEventEditor.ViewModels.SoundEvents
                 new StringOptionViewModel("StartPitch", evt.StartPitch),
                 new StringOptionViewModel("TargetPitch", evt.TargetPitch),
                 new StringOptionViewModel("EndPitch", evt.EndPitch),
-            };
+            ];
 
-            SelectableChildren = new()
+            
+            foreach (var character in evt.Characters)
             {
-            };
+                Children.Add(ConvertToViewModel(character));
+            }
+
+            SelectableChildren = [SoundEventType.Character]; // no children allowed
         }
 
         public override SoundEvent RebuildEvent()
         {
-            SEVT_1 evt = (SEVT_1)Model;
+            SoundEvent10 evt = (SoundEvent10)Model;
 
-            evt.Children = new();
+            evt.Children = [Name.RebuildEvent()];
 
             foreach (var conn in Connections)
             {
@@ -157,15 +179,26 @@ namespace SoundEventEditor.ViewModels.SoundEvents
             evt.TargetPitch = GetOption("TargetPitch").GetFloat();
             evt.EndPitch = GetOption("EndPitch").GetFloat();
 
+            evt.Characters.Clear();
+            foreach (var c in Children)
+            {
+                evt.Characters.Add((SoundEvent12)c.RebuildEvent());
+            }
+
             return evt;
         }
 
-        public SoundEvent1()
+        public SoundEvent10ViewModel()
         {
-            BuildFromEvent(new SEVT_1());
+            SoundEvent6 name = new();
+            SoundEvent10 evt10 = new();
+
+            evt10.Children.Add(name);
+
+            BuildFromEvent(evt10);
         }
 
-        public SoundEvent1(SEVT_1 evt)
+        public SoundEvent10ViewModel(SoundEvent10 evt)
         {
             BuildFromEvent(evt);
         }

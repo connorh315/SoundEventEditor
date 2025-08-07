@@ -1,11 +1,7 @@
 using Avalonia.Controls;
-using Avalonia.Metadata;
-using Avalonia.OpenGL.Surfaces;
+using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using SoundEventEditor.SoundEvents;
 using SoundEventEditor.ViewModels;
-using SoundEventEditor.ViewModels.SoundEvents;
-using System;
 using System.ComponentModel;
 using static SoundEventEditor.ViewModels.SoundEventViewModel;
 
@@ -13,91 +9,116 @@ namespace SoundEventEditor
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private static readonly SoundEventType[] PossibleRootTypes = 
-            { SoundEventType.Event, SoundEventType.Sample, SoundEventType.Stream, SoundEventType.Group, SoundEventType.Sequence, SoundEventType.Conversation, SoundEventType.Speech, SoundEventType.StreamingSpeech };
+        private static readonly SoundEventType[] _possibleRootTypes =
+        [
+            SoundEventType.Event,
+            SoundEventType.Sample,
+            SoundEventType.Stream,
+            SoundEventType.Group,
+            SoundEventType.Sequence,
+            SoundEventType.Conversation,
+            SoundEventType.Speech,
+            SoundEventType.StreamingSpeech
+        ];
 
         public MainWindow()
         {
             InitializeComponent();
+
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            Title                 = AppSettings.DisplayName;
+            DataContext           = new MainWindowViewModel();
 
-            Title = AppSettings.DisplayName;
-            
-            DataContext = new MainWindowViewModel();
+            MenuFlyout menuFlyout = new();
 
-            var flyout = new MenuFlyout();
-
-            foreach (SoundEventType typ in PossibleRootTypes)
+            foreach (SoundEventType soundEventType in _possibleRootTypes)
             {
-                var item = new MenuItem { Header = typ.ToString() };
+                MenuItem menuItem = new() { Header = soundEventType.ToString() };
 
-                item.Click += (_, _) => CreateRootNode(typ);
+                menuItem.Click += (_, _) => CreateRootNode(soundEventType);
 
-                flyout.Items.Add(item);
+                menuFlyout.Items.Add(menuItem);
             }
 
-            CreateRootButton.Flyout = flyout;
+            CreateRootButton.Flyout = menuFlyout;
         }
 
         private void CreateRootNode(SoundEventType type)
         {
-            if (DataContext is not MainWindowViewModel vm)
+            if (DataContext is not MainWindowViewModel viewModel)
+            {
                 return;
+            }
 
-            vm.SetRootSoundEvent(type);
+            viewModel.SetRootSoundEvent(type);
         }
 
-        private async void MenuItem_Open(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void MenuItem_Open(object sender, RoutedEventArgs e)
         {
             var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = "Open SoundEvent File",
-                AllowMultiple = false,
-                FileTypeFilter = new[]
-                {
-                    new FilePickerFileType("DAT files") { Patterns = new[] { "*.SOUND_EVENT" } }
-                }
+                Title          = "Open SoundEvent File",
+                AllowMultiple  = false,
+                FileTypeFilter =
+                [
+                    new FilePickerFileType("SoundEvent files") { Patterns = ["*.SOUND_EVENT"] }
+                ]
             });
 
             if (files.Count > 0)
             {
-                string filePath = files[0].Path.LocalPath;
-
-                if (DataContext is not MainWindowViewModel vm)
+                if (DataContext is not MainWindowViewModel viewModel)
+                {
                     return;
+                }
 
-                vm.OpenFile(filePath);
+                viewModel.OpenFile(files[0].Path.LocalPath);
             }
         }
 
-        private async void MenuItem_Save(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void MenuItem_Save(object sender, RoutedEventArgs e)
         {
-            if (DataContext is not MainWindowViewModel vm) return;
-
-            if (vm.FileLocation == null || vm.FileLocation == "")
+            if (DataContext is not MainWindowViewModel viewModel)
             {
-                MenuItem_SaveAs(sender, e);
                 return;
             }
 
-            vm.SaveFile();
+            if (viewModel.FilePath == null || viewModel.FilePath == "")
+            {
+                MenuItem_SaveAs(sender, e);
+
+                return;
+            }
+
+            viewModel.SaveFile();
         }
 
-        private async void MenuItem_SaveAs(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void MenuItem_SaveAs(object sender, RoutedEventArgs e)
         {
-            if (DataContext is not MainWindowViewModel vm) return;
+            if (DataContext is not MainWindowViewModel viewModel)
+            {
+                return;
+            }
 
             var files = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Title = "Open SoundEvent File",
+                Title            = "Open SoundEvent File",
                 DefaultExtension = "SOUND_EVENT"
             });
 
-            if (files == null) return;
+            if (files == null)
+            {
+                return;
+            }
 
-            vm.FileLocation = files.Path.LocalPath;
+            viewModel.FilePath = files.Path.LocalPath;
 
-            vm.SaveFile();
+            viewModel.SaveFile();
+        }
+
+        private void MenuItem_Exit(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

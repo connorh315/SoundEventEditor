@@ -1,14 +1,8 @@
-﻿using Avalonia.Controls.Chrome;
-using SoundEventEditor.SoundEvents;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SoundEventEditor.SoundEvents;
 
 namespace SoundEventEditor.ViewModels.SoundEvents
 {
-    public class SoundEvent7 : SoundEventViewModel
+    public class SoundEvent7ViewModel : SoundEventViewModel
     {
         public override string Title => "Sequence";
 
@@ -16,7 +10,7 @@ namespace SoundEventEditor.ViewModels.SoundEvents
 
         protected override void BuildFromEvent(SoundEvent rawEvent)
         {
-            SEVT_7 evt = (SEVT_7)rawEvent;
+            SoundEvent7 evt = (SoundEvent7)rawEvent;
 
             Model = evt;
 
@@ -25,20 +19,20 @@ namespace SoundEventEditor.ViewModels.SoundEvents
                 Connections.Add(ConvertToViewModel(child));
             }
 
-            Options = new()
-            {
+            Options =
+            [
                 new StringOptionViewModel("Delay", evt.Delay, true, true)
-            };
+            ];
 
             SelectableChildren = new() { SoundEventType.BusConnection };
         }
 
-        public SoundEvent7()
+        public SoundEvent7ViewModel()
         {
-            BuildFromEvent(new SEVT_7());
+            BuildFromEvent(new SoundEvent7());
         }
 
-        public SoundEvent7(SEVT_7 evt)
+        public SoundEvent7ViewModel(SoundEvent7 evt)
         {
             BuildFromEvent(evt);
         }

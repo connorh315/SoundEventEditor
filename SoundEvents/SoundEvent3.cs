@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SoundEventEditor.SoundEvents
 {
-    public class SEVT_3 : SoundEvent // Group
+    public class SoundEvent3 : SoundEvent // Group
     {
         public override int Version => 3;
 
@@ -78,7 +74,7 @@ namespace SoundEventEditor.SoundEvents
                 Connections = new List<SoundEvent>(componentsCount);
                 for (int i = 0; i < componentsCount; i++)
                 {
-                    Connections.Add(SoundEvent.GetSoundEvent(file));
+                    Connections.Add(GetSoundEvent(file));
                 }
             }
 
@@ -94,7 +90,7 @@ namespace SoundEventEditor.SoundEvents
 
             for (int i = 0; i < sampleCount; i++)
             {
-                Children.Add(SoundEvent.GetSoundEvent(file));
+                Children.Add(GetSoundEvent(file));
             }
         }
     }

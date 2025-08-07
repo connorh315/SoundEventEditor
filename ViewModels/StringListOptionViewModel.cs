@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace SoundEventEditor.ViewModels
 {
     public class StringListOptionViewModel : SoundEventOptionViewModel
     {
-        public override object? Value { get => Values; set => throw new Exception($"Should not be setting .Value on a StringListOptionViewModel ({Label})"); }
+        public override object Value
+        {
+            get => Values;
+            set => throw new Exception($"Should not be setting .Value on a StringListOptionViewModel ({Label})");
+        }
         
-        public ObservableCollection<StringItemViewModel> Values { get; private set; } = new();
+        public ObservableCollection<StringItemViewModel> Values { get; private set; } = [];
 
         public List<string> StringValues
         {
@@ -33,10 +34,12 @@ namespace SoundEventEditor.ViewModels
 
         public ICommand RemoveCommand { get; }
 
-        public void RemoveItem(object? parameter)
+        public void RemoveItem(object parameter)
         {
             if (parameter is StringItemViewModel item)
+            {
                 Values.Remove(item);
+            }
         }
 
         public StringListOptionViewModel(string label, IEnumerable<string> values)

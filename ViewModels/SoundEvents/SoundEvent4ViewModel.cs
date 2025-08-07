@@ -1,15 +1,8 @@
-﻿using Avalonia.Controls.Chrome;
-using SoundEventEditor.SoundEvents;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SoundEventEditor.SoundEvents;
 
 namespace SoundEventEditor.ViewModels.SoundEvents
 {
-    public class SoundEvent4 : SoundEventViewModel
+    public class SoundEvent4ViewModel : SoundEventViewModel
     {
         public override string Title => "Bus Connection";
 
@@ -17,32 +10,32 @@ namespace SoundEventEditor.ViewModels.SoundEvents
 
         protected override void BuildFromEvent(SoundEvent rawEvent)
         {
-            SEVT_4 evt = (SEVT_4)rawEvent;
+            SoundEvent4 evt = (SoundEvent4)rawEvent;
 
             Model = evt;
 
-            Options = new()
-            {
+            Options =
+            [
                 new StringListOptionViewModel("Buses", evt.Buses),
                 //new StringOptionViewModel("Bus", evt.Buses[0])
-            };
+            ];
         }
 
         public override SoundEvent RebuildEvent()
         {
-            SEVT_4 evt = (SEVT_4)Model;
+            SoundEvent4 evt = (SoundEvent4)Model;
 
             evt.Buses = ((StringListOptionViewModel)GetOption("Buses")).StringValues;
 
             return evt;
         }
 
-        public SoundEvent4()
+        public SoundEvent4ViewModel()
         {
-            BuildFromEvent(new SEVT_4());
+            BuildFromEvent(new SoundEvent4());
         }
 
-        public SoundEvent4(SEVT_4 evt)
+        public SoundEvent4ViewModel(SoundEvent4 evt)
         {
             BuildFromEvent(evt);
         }

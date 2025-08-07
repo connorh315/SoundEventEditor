@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SoundEventEditor.ViewModels
 {
     public class StringOptionViewModel : SoundEventOptionViewModel
     {
         private string _value = "";
-        public override object? Value
+        public override object Value
         {
             get => _value;
-            set => _value = value?.ToString() ?? "";
+            set => _value = value == null ? "" : value.ToString();
         }
 
         public bool IsNumeric { get; set; } = false;
@@ -42,10 +37,10 @@ namespace SoundEventEditor.ViewModels
 
         public StringOptionViewModel(string label, string value, bool isNumeric = false, bool isFloat = false)
         {
-            LabelKey = label;
-            Value = value;
+            LabelKey  = label;
+            Value     = value;
             IsNumeric = isNumeric;
-            IsFloat = isFloat;
+            IsFloat   = isFloat;
         }
 
         public StringOptionViewModel(string label, int value, bool isNumeric = true, bool isFloat = false)
@@ -54,7 +49,7 @@ namespace SoundEventEditor.ViewModels
         }
 
         public StringOptionViewModel(string label, float value, bool isNumeric = true, bool isFloat = true)
-        : this(label, value.ToString("0.#####"), isNumeric, isFloat)
+            : this(label, value.ToString("0.#####"), isNumeric, isFloat)
         {
         }
     }

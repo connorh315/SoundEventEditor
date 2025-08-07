@@ -1,89 +1,83 @@
-﻿using Avalonia.Remote.Protocol;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SoundEventEditor.SoundEvents
 {
-    public class SEVT_2 : SoundEvent
+    public class SoundEvent9 : SoundEvent
     {
-        public override int Version => 2;
+        public override int Version => 9;
 
         public byte Val1 = 0;
         public byte Val2 = 1;
-        public byte MaxVoices = 4; // or 1 or 16
-        public byte MaxVoicesBehaviour = 1; // or 0
+        public byte Val3 = 4;
+        public byte Val4 = 1;
         public byte Val5 = 0;
         public byte Val6 = 5;
 
-        public byte Val14 = 1; // Always
-        public byte Val15 = 1; // Always
+        public byte Val14 = 1;
+        public byte Val15 = 1;
         public byte Global = 0; // Always
-        public byte Val17 = 0;
+        public byte Val17 = 0; // Always
 
         public byte MainFiletype = 1;
         public byte FiletypeGen7 = 1;
-        public byte UnknownFiletype = 3;
-        public byte UnknownFiletype2 = 4;
+        public byte UnknownFiletype = 9;
+        public byte UnknownFiletype2 = 9;
 
         public byte UnknownFiletype3 = 1;
         public byte UnknownFiletype4 = 1;
         public byte UnknownFiletype5 = 1;
-        public byte UnknownFiletype6 = 10;
+        public byte UnknownFiletype6 = 1;
         public byte UnknownFiletype7 = 1;
 
         public byte HasOcclusion = 1;
         public byte UpdateMix = 1;
         public byte NoRear = 0;
-        public byte ForceNonPos = 1; // or 0
-        public byte Val25 = 0;
-        public byte OverrideUserMusic = 0; // or 1
-        public byte Loopable = 0; // or 1
-        public byte FallOffTypeInverse = 0; // Always
-        public byte Val29 = 0; // Always
-        public byte Regional = 1; // Always
-        public byte LoadPriority = 5; // or 10, 9
+        public byte ForceNonPos = 1; // Or 0
+        public byte Val25 = 0; // Always
+        public byte OverrideUserMusic = 0;
+        public byte Loopable = 0;
+        public byte FallOffTypeInverse = 0;
+        public byte Val29 = 0;
+        public byte Regional = 1;
+        public byte LoadPriority = 10;
 
-        public float FieldAngleMin = 20; // Always
-        public float FieldAngleMax = 180; // Always
-        public float BleedAngle = 70; // Always
-        public float BleedNear = 0; // Always
-        public float BleedFar = 0; // Always
-        public float LowPassNear = 0; // Always
-        public float LowPassFar = 0; // Always
-        public float FadeIn = 0; // Range of values
-        public float FadeOut = 0; // Range of values
-        public float PitchRampUpTime = 0; // Always
-        public float PitchRampDownTime = 0; // Always
-        public float Near = 1;
-        public float Far = 6;
-        public float Volume = 1; // Range of values
-        public float RandomVolume = 0; // Range of values
-        public float Pitch = 1; // Always
-        public float RandomPitch = 0; // Always
-        public float PitchTimeScaleFactor = 0.5f; // Always
-        public float LowPass = 1; // Always
-        public float RandomLowPass = 0; // Always
-        public float LowPassQ = 1; // Always
-        public float LfeMix = 0.1f; // Always
-        public float ReverbWetMix = 1; // Always
-        public float StartOffset = 0; // Always
-        public float RandomStartOffset = 0; // Always
-        public float DopplerEffectScalar = 0; // Always
-        public float StartPitch = 1; // Always
-        public float TargetPitch = 1; // Always
-        public float EndPitch = 1; // Always
+        public float FieldAngleMin = 20;
+        public float FieldAngleMax = 180;
+        public float BleedAngle = 70;
+        public float BleedNear = 0;
+        public float BleedFar = 0;
+        public float LowPassNear = 0;
+        public float LowPassFar = 0;
+        public float FadeIn = 0;
+        public float FadeOut = 1; // Or 0
+        public float PitchRampUpTime = 0;
+        public float PitchRampDownTime = 0;
+        public float Near = 90;
+        public float Far = 100;
+        public float Volume = 0.7f;
+        public float RandomVolume = 0;
+        public float Pitch = 1;
+        public float RandomPitch = 0;
+        public float PitchTimeScaleFactor = 0;
+        public float LowPass = 0;
+        public float RandomLowPass = 0;
+        public float LowPassQ = 1;
+        public float LfeMix = 0.1f;
+        public float ReverbWetMix = 0.7f; // or 0
+        public float StartOffset = 0;
+        public float RandomStartOffset = 0;
+        public float DopplerEffectScalar = 0;
+        public float StartPitch = 1;
+        public float TargetPitch = 1;
+        public float EndPitch = 1;
+
+        public byte SoundType = 9;
+        public byte Val27 = 1;
 
         public string Filename;
         public string Mix;
         public string RoutingTable;
-
-        public byte Val100 = 2; // Always
-        public byte Val101 = 1; // Always
-
-        public List<float> Cues = new();
+        public List<SoundEvent12> Characters = [];
 
         public override void Write(RawFile file)
         {
@@ -91,8 +85,8 @@ namespace SoundEventEditor.SoundEvents
 
             file.WriteByte(Val1);
             file.WriteByte(Val2);
-            file.WriteByte(MaxVoices);
-            file.WriteByte(MaxVoicesBehaviour);
+            file.WriteByte(Val3);
+            file.WriteByte(Val4);
             file.WriteByte(Val5);
             file.WriteByte(Val6);
             file.WriteByte((byte)Children.Count);
@@ -162,24 +156,31 @@ namespace SoundEventEditor.SoundEvents
             file.WritePascalString(Mix);
             file.WritePascalString(RoutingTable);
 
-            file.WriteByte(Val100);
-            file.WriteByte(Val101);
-            file.WriteByte((byte)Cues.Count);
-            foreach (float cue in Cues)
+            file.WriteByte(SoundType);
+            file.WriteByte(Val27);
+            file.WriteByte((byte)Characters.Count);
+
+            foreach (var character in Characters)
             {
-                file.WriteFloat(cue, true);
+                file.WriteByte(character.EventType);
+                file.WriteByte(character.EventVersion);
+                file.WriteByte(character.NoFlappy);
+                file.WritePascalString(character.CharacterName);
+                file.WritePascalString(character.BodyAnimationSet);
+                file.WritePascalString(character.BodyAnimationAction);
+                file.WritePascalString(character.FacialAnimationSet);
+                file.WritePascalString(character.FacialAnimationAction);
             }
         }
 
-        public override void Parse(RawFile file)
+        public override void Parse(RawFile file) // Speech
         {
             Val1 = file.ReadByte();
             Val2 = file.ReadByte();
-            MaxVoices = file.ReadByte();
-            MaxVoicesBehaviour = file.ReadByte();
+            Val3 = file.ReadByte();
+            Val4 = file.ReadByte();
             Val5 = file.ReadByte();
             Val6 = file.ReadByte();
-
             byte components = file.ReadByte();
 
             Children = new List<SoundEvent>(components);
@@ -193,7 +194,6 @@ namespace SoundEventEditor.SoundEvents
             Val15 = file.ReadByte();
             Global = file.ReadByte();
             Val17 = file.ReadByte();
-
             MainFiletype = file.ReadByte();
             UnknownFiletype = file.ReadByte();
             FiletypeGen7 = file.ReadByte();
@@ -203,7 +203,6 @@ namespace SoundEventEditor.SoundEvents
             UnknownFiletype5 = file.ReadByte();
             UnknownFiletype6 = file.ReadByte();
             UnknownFiletype7 = file.ReadByte();
-
             HasOcclusion = file.ReadByte();
             UpdateMix = file.ReadByte();
             NoRear = file.ReadByte();
@@ -250,13 +249,19 @@ namespace SoundEventEditor.SoundEvents
             Mix = file.ReadPascalString();
             RoutingTable = file.ReadPascalString();
 
-            Val100 = file.ReadByte();
-            Val101 = file.ReadByte();
-            byte cueCount = file.ReadByte();
+            SoundType = file.ReadByte();
+            Val27 = file.ReadByte();
+            byte characterCount = file.ReadByte();
 
-            for (int i = 0; i < cueCount; i++)
+            Characters = new List<SoundEvent12>(characterCount);
+
+            for (int i = 0; i < characterCount; i++)
             {
-                Cues.Add(file.ReadFloat(true));
+                var character = new SoundEvent12();
+
+                character.Parse(file);
+
+                Characters.Add(character);
             }
         }
     }

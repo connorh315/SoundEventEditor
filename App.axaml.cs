@@ -11,8 +11,6 @@ namespace SoundEventEditor
     {
         public override void Initialize()
         {
-            Localiser.Initialise();
-
             AvaloniaXamlLoader.Load(this);
         }
 

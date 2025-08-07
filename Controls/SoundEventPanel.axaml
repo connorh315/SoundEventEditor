@@ -28,7 +28,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type vm:DividerViewModel}">
-      <Border BorderThickness="0 0 0 2" BorderBrush="Gainsboro" Padding="0 0 0 4" Margin="0 8 0 16">
+      <Border BorderThickness="0 0 0 1" BorderBrush="Gainsboro" Padding="0 0 0 4" Margin="0 8 0 16">
         <TextBlock Text="{Binding Label}" FontWeight="Bold" Foreground="Gainsboro" />
       </Border>
     </DataTemplate>
@@ -38,7 +38,7 @@
     </DataTemplate>
   </UserControl.DataTemplates>
 
-  <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="8" Padding="8">
+  <Border BorderThickness="1" BorderBrush="DimGray" CornerRadius="8" Padding="8">
     <StackPanel Spacing="10">
       <Grid>
         <Grid.ColumnDefinitions>
@@ -53,7 +53,7 @@
         <Button Grid.Column="1" Content="X" Background="DarkRed" Click="DestroyThis" />
       </Grid>
 
-      <Expander HorizontalAlignment="Stretch" Background="Transparent" IsVisible="{Binding HasConnections}" x:Name="ConnectionsContainer">
+      <Expander HorizontalAlignment="Stretch" Background="Transparent" IsVisible="{Binding HasConnections}" x:Name="ConnectionsContainer" IsExpanded="True" >
         <Expander.Header>
           <DockPanel>
             <TextBlock VerticalAlignment="Center" Text="Connections" DockPanel.Dock="Left" />
@@ -76,7 +76,7 @@
         </StackPanel>
       </Expander>
       
-      <Expander Header="Options" HorizontalAlignment="Stretch" Background="Transparent">
+      <Expander Header="Options" HorizontalAlignment="Stretch" Background="Transparent" IsExpanded="True" >
         <StackPanel Margin="5">
           <ItemsControl ItemsSource="{Binding Options}">
             <ItemsControl.ItemsPanel>
@@ -93,7 +93,7 @@
         </StackPanel>
       </Expander>
       
-      <Expander HorizontalAlignment="Stretch" Background="Transparent" x:Name="ChildrenContainer" >
+      <Expander HorizontalAlignment="Stretch" Background="Transparent" x:Name="ChildrenContainer" IsExpanded="True" >
         <Expander.Header>
           <DockPanel>
             <TextBlock VerticalAlignment="Center" Text="Children" DockPanel.Dock="Left" />
@@ -113,9 +113,9 @@
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
-          
         </StackPanel>
       </Expander>
+      
     </StackPanel>
   </Border>
 

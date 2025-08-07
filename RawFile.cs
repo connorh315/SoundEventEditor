@@ -1,10 +1,6 @@
-﻿using Avalonia.Controls.Documents;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SoundEventEditor
 {
@@ -159,7 +155,7 @@ namespace SoundEventEditor
             if (length == 0) return string.Empty;
             byte[] array = new byte[length];
             fileStream.Read(array, 0, length);
-            if (array[array.Length - 1] == 0)
+            if (array[^1] == 0)
             {
                 return Encoding.Default.GetString(array, 0, array.Length - 1);
             }
@@ -187,8 +183,6 @@ namespace SoundEventEditor
 
             return combined;
         }
-
-
 
         /// <summary>
         /// Reads a pascal string with a SHORT preceding it
@@ -225,7 +219,9 @@ namespace SoundEventEditor
         public void WritePadding(long count)
         {
             if (count < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(count));
+            }
 
             while (count > 0)
             {

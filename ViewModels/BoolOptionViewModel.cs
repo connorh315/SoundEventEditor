@@ -1,29 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SoundEventEditor.ViewModels
+﻿namespace SoundEventEditor.ViewModels
 {
     public class BoolOptionViewModel : SoundEventOptionViewModel
     {
         private bool _value;
-        public override object? Value
+        public override object Value
         {
             get => _value;
             set => _value = value is bool b ? b : _value;
         }
 
-        public override byte GetByte() => (byte)((bool)Value ^ InvertValue ? 1 : 0);
-
-        private bool InvertValue;
+        private readonly bool _invertValue;
+        public override byte GetByte() => (byte)((bool)Value ^ _invertValue ? 1 : 0);
 
         public BoolOptionViewModel(string label, byte value, bool shouldInvert = false)
         {
-            LabelKey = label;
-            Value = (value == 1 ^ shouldInvert) ? true : false;
-            InvertValue = shouldInvert;
+            _invertValue = shouldInvert;
+            LabelKey     = label;
+            Value        = value == 1 ^ shouldInvert;
         }
     }
 }

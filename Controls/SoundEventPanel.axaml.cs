@@ -1,76 +1,84 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Interactivity;
 using SoundEventEditor.ViewModels;
 using SoundEventEditor.ViewModels.SoundEvents;
 using System.Collections.ObjectModel;
-using Tmds.DBus.Protocol;
-using static SoundEventEditor.ViewModels.SoundEventViewModel;
 
-namespace SoundEventEditor;
-
-public partial class SoundEventPanel : UserControl
+namespace SoundEventEditor
 {
-    public ObservableCollection<MenuItem> AddableChildItems { get; } = new();
-
-    public SoundEventPanel()
+    public partial class SoundEventPanel : UserControl
     {
-        InitializeComponent();
+        public ObservableCollection<MenuItem> AddableChildItems { get; } = [];
 
-        DataContextChanged += (_, _) => PopulateAddChildButton();
-
-    }
-
-    private void AddChild(SoundEventType type)
-    {
-        if (DataContext is not SoundEventViewModel vm)
-            return;
-
-        vm.Children.Add(SoundEventViewModel.CreateSoundEvent(type));
-
-        vm.Children[vm.Children.Count - 1].Parent = vm;
-
-        ChildrenContainer.IsExpanded = true;
-    }
-
-    private void PopulateAddChildButton()
-    {
-        if (DataContext is not SoundEventViewModel vm)
-            return;
-
-        if (vm.SelectableChildren == null || vm.SelectableChildren.Count == 0)
+        public SoundEventPanel()
         {
-            ChildrenContainer.IsVisible = false;
-            return;
+            InitializeComponent();
+
+            DataContextChanged += (_, _) => PopulateAddChildButton();
         }
 
-        var flyout = new MenuFlyout();
-
-        foreach (var typ in vm.SelectableChildren)
+        private void AddChild(SoundEventViewModel.SoundEventType type)
         {
-            var item = new MenuItem { Header = typ.ToString() };
+            if (DataContext is not SoundEventViewModel soundEventViewModel)
+            {
+                return;
+            }
 
-            item.Click += (_, _) => AddChild(typ);
+            soundEventViewModel.Children.Add(SoundEventViewModel.CreateSoundEvent(type));
 
-            flyout.Items.Add(item);
+            soundEventViewModel.Children[^1].Parent = soundEventViewModel;
+
+            ChildrenContainer.IsExpanded = true;
         }
 
-        AddChildButton.Flyout = flyout;
-    }
+        private void PopulateAddChildButton()
+        {
+            if (DataContext is not SoundEventViewModel soundEventViewModel)
+            {
+                return;
+            }
 
-    private void DestroyThis(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is not SoundEventViewModel vm) return;
+            if (soundEventViewModel.SelectableChildren == null || soundEventViewModel.SelectableChildren.Count == 0)
+            {
+                ChildrenContainer.IsVisible = false;
 
-        vm.Destroy();
-    }
+                return;
+            }
 
-    private void AddConnection(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is not SoundEventViewModel vm)
-            return;
+            MenuFlyout flyout = new();
 
-        vm.Connections.Add(new SoundEvent4() { Parent = vm });
-        ConnectionsContainer.IsExpanded = true;
+            foreach (var soundEventType in soundEventViewModel.SelectableChildren)
+            {
+                MenuItem item = new() { Header = soundEventType.ToString() };
+
+                item.Click += (_, _) => AddChild(soundEventType);
+
+                flyout.Items.Add(item);
+            }
+
+            AddChildButton.Flyout = flyout;
+        }
+
+        private void DestroyThis(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not SoundEventViewModel soundEventViewModel)
+            {
+                return;
+            }
+
+            soundEventViewModel.Destroy();
+        }
+
+        private void AddConnection(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not SoundEventViewModel soundEventViewModel)
+            {
+                return;
+            }
+
+            soundEventViewModel.Connections.Add(new SoundEvent4ViewModel() { Parent = soundEventViewModel });
+
+            ConnectionsContainer.IsExpanded = true;
+        }
     }
 }
